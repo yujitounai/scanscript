@@ -776,7 +776,6 @@ javascript:(function() {
 			 urls.push(location.protocol+'//'+location.host+path+'/'+pages[i]+extensions[j]+secondexts[k]);
 		} } }
 		urls.push('http://xxe.tokyo');
-
 		progress_results .innerText=( (org_cnt>0) ? org_cnt:cnt)+"/"+(urls.length-1);
 		data_results.innerText=urls[cnt];
 		find_results.innerText=findurls;
