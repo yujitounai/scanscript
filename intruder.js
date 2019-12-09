@@ -1,6 +1,6 @@
 javascript:(function() {
 	var urls=[],cnt=0,org_cnt=0,thr=500,wordcnt=10,findurls=[];redirurls=[];
-	var passes=[];
+	var passes=[],t1=[],t2=[],myRequests=[];
 	var checknum;
     var pre_input;
 	var progress_results ,data_input,find_results;
@@ -361,7 +361,7 @@ javascript:(function() {
 			rawbodys.push(rawbody.replace(/\|\|\|.+\|\|\|/, passes[j]));
 			urls.push(location.protocol+'//'+location.host+path.replace(/\|\|\|.+\|\|\|/, passes[j]));
 		}
-		
+		rawbodys.push('dummy');
 		urls.push('http://xxe.tokyo');
 		progress_results .innerText=( (org_cnt>0) ? org_cnt:cnt)+"/"+(urls.length-1);
 		data_input.innerText="";
@@ -404,9 +404,10 @@ javascript:(function() {
 	}
 	buildpayloads();
 	function callme(){
+		t1[cnt] = performance.now();
 		var myInit;
-		var bodywtoken=rawbodys[cnt].replace(/\r|\n/g, "");
 		if (rawbodys[cnt].indexOf('$$$') != -1) {
+			var bodywtoken=rawbodys[cnt].replace(/\r|\n/g, "");
 			gettoken().then(data => {
 				console.log(data);
 				var preregexp = new RegExp(regexp_input.value);
@@ -429,8 +430,9 @@ javascript:(function() {
 						body: bodywtoken,
 					};
 				}
-				var myRequest = new Request(urls[cnt],myInit);
-				var networkPromise = fetch(myRequest).then(function(response) {
+				myRequests[cnt] = new Request(urls[cnt],myInit);
+				var networkPromise = fetch(myRequests[cnt]).then(function(response) {
+					t2[cnt] = performance.now();
 					if(!response.ok){
 						console.log(response.status+' ng '+response.url);
 						if (response.status=='0')redirurls.push(response.url);
@@ -438,6 +440,7 @@ javascript:(function() {
 						findurls.push(response.url);
 						console.log(response.status+' yes '+response.url);
 					}
+					console.log("t3:"+cnt+":"+(t2[cnt]-t1[cnt]));
 				});
 				var timeOutPromise = new Promise(function(resolve, reject) {
 					throbj = document.getElementsByName('throttle');
@@ -451,8 +454,8 @@ javascript:(function() {
 					find_results.innerText=passes[cnt];
 					progress_results .innerText=( (org_cnt>0) ? org_cnt:cnt)+"/"+(urls.length-1);
 					if (cnt < urls.length-1){
-						callme();
 						cnt++;
+						callme();
 					}else{
 						cnt=urls.length-1;
 					}
@@ -478,8 +481,10 @@ javascript:(function() {
 					body: rawbodys[cnt].replace(/\r|\n/, ""),
 				};
 			}
-			var myRequest = new Request(urls[cnt],myInit);
-			var networkPromise = fetch(myRequest).then(function(response) {
+			myRequests[cnt] = new Request(urls[cnt],myInit);
+			var networkPromise = fetch(myRequests[cnt])
+			.then(function(response) {
+				t2[cnt] = performance.now();
 				if(!response.ok){
 					console.log(response.status+' ng '+response.url);
 					if (response.status=='0')redirurls.push(response.url);
@@ -487,6 +492,8 @@ javascript:(function() {
 					findurls.push(response.url);
 					console.log(response.status+' yes '+response.url);
 				}
+				console.log("t3:"+cnt+":"+(t2[cnt]-t1[cnt]));
+
 			});
 			var timeOutPromise = new Promise(function(resolve, reject) {
 				throbj = document.getElementsByName('throttle');
@@ -500,8 +507,8 @@ javascript:(function() {
 				find_results.innerText=passes[cnt];
 				progress_results .innerText=( (org_cnt>0) ? org_cnt:cnt)+"/"+(urls.length-1);
 				if (cnt < urls.length-1){
-					callme();
 					cnt++;
+					callme();
 				}else{
 					cnt=urls.length-1;
 				}
