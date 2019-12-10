@@ -16,27 +16,20 @@ matchword=matchword+'[libs:]'+'\n';
 for(var i in libs) {
  if (src.indexOf(libs[i]) !== -1)matchword=matchword+libs[i]+'\n'
 }
-var myArray;
-matchword=matchword+'[links:]'+'\n';
-var preregexp = new RegExp("\"(https?://[^ ]+.js?)\"", "g");
-var found = src.match(preregexp);
-while ((myArray = preregexp.exec(src)) !== null) {
- found=myArray[1];
- matchword=matchword+found+'\n';
-}
-matchword=matchword+'[links?:]'+'\n';
-preregexp = new RegExp("[\"\'](/?[^ ]+\.js?)[\"\']", "ig");
-found = src.match(preregexp);
-while ((myArray = preregexp.exec(src)) !== null) {
- found=myArray[1];
- matchword=matchword+found+'\n';
-}
-matchword=matchword+'[scripts?:]'+'\n';
-preregexp = new RegExp("<script.+src=\"(.+?)\"","ig");
-found = src.match(preregexp);
-while ((myArray = preregexp.exec(src)) !== null) {
- found=myArray[1];
- matchword=matchword+found+'\n';
-}
 alert(matchword);
+remotescripts='[remotescripts:]'+'\n';
+localscripts='[localscripts:]'+'\n';
+var snodes = document.getElementsByTagName("script");
+for (var i=0; i < snodes.length; i++) {
+	var remotesrc = snodes[i].src;
+	var localsrc = snodes[i].textContent;
+	if (remotesrc!==""){
+		remotescripts=remotescripts+remotesrc+'\n';
+	}
+	if (localsrc!==""){
+		localscripts=localscripts+'<script>'+localsrc+'<\/script>\n';
+	}
+}
+console.log(remotescripts);
+console.log(localscripts);
 })();
