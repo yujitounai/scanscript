@@ -1,8 +1,8 @@
 javascript:(function() {
-	var urls=[],cnt=0,org_cnt=0,thr=500,wordcnt=10,findurls=[];redirurls=[];
+	var urls=[],cnt=0,org_cnt=0,thr=500,wordcnt=10,number_from=0,number_to=10,findurls=[];redirurls=[];
 	var passes=[],t1=[],t2=[],myRequests=[];
 	var checknum;
-    var pre_input;
+	var pre_input;
 	var progress_results ,data_input,find_results;
 	var secondexts=[
 		'',
@@ -10,9 +10,10 @@ javascript:(function() {
 	var extensions=[
 	];
 	var org_extlists=[
-		['数字','checked'],
-		['英大小文字','checked'],
+		['数字',''],
+		['英大小文字',''],
 		['記号',''],
+		['数値','checked'],
 	];
 	var extlists=JSON.parse(JSON.stringify(org_extlists));
 	function makepayload(pos,type){
@@ -22,15 +23,22 @@ javascript:(function() {
 		var symbols="\"!#$%&'()*+-;:|=~";
 		var word="";
 		if (type & 1){
-			return pos;
+			word=word+numbers;
 		}
 		if (type & 2){
-			return alphabets[pos];
+			word=word+alphabets;
 		}
 		if (type & 4){
 			word=word+symbols;
 		}
-		return result;
+		if (type & 8){
+			return pos;
+		}
+		if(pos<word.length){
+			return word[pos];
+		}else{
+			return pos;
+		}
 	}
 
 	var d = document,id = "intruder",parentel = d.getElementById(id);
@@ -147,11 +155,35 @@ javascript:(function() {
 		count_input.setAttribute("value",wordcnt);
 		configbox.appendChild(count_input);
 
-		const count_span2 = document.createElement("span");
-		const count_text2 = document.createTextNode("ms");
-		count_span2.setAttribute("style","border:1px solid;background:#FFF;margin:2pt;padding:1pt;");
-		count_span2.appendChild(count_text2);
-		configbox.appendChild(count_span2);
+		const number_from_span = document.createElement("span");
+		const number_from_text = document.createTextNode("number_from");
+		number_from_span.setAttribute("id", "number_from");
+		number_from_span.setAttribute("style","border:1px solid;background:#FFF;margin:2pt;padding:1pt;");
+		number_from_span.appendChild(number_from_text);
+		configbox.appendChild(number_from_span);
+
+		number_from_input = document.createElement("input");
+		number_from_input.setAttribute("type","text"); 
+		number_from_input.setAttribute("maxlength","5"); 
+		number_from_input.setAttribute("size","5");
+		number_from_input.setAttribute("name","number_from");  
+		number_from_input.setAttribute("value",number_from);
+		configbox.appendChild(number_from_input);
+
+		const number_to_span = document.createElement("span");
+		const number_to_text = document.createTextNode("number_to");
+		number_to_span.setAttribute("id", "number_to");
+		number_to_span.setAttribute("style","border:1px solid;background:#FFF;margin:2pt;padding:1pt;");
+		number_to_span.appendChild(number_to_text);
+		configbox.appendChild(number_to_span);
+
+		number_to_input = document.createElement("input");
+		number_to_input.setAttribute("type","text"); 
+		number_to_input.setAttribute("maxlength","5"); 
+		number_to_input.setAttribute("size","5");
+		number_to_input.setAttribute("name","number_to");  
+		number_to_input.setAttribute("value",number_to);
+		configbox.appendChild(number_to_input);
 
 		extbox = document.createElement("div");
 		const exttext1 = document.createTextNode(" ");
@@ -187,21 +219,20 @@ javascript:(function() {
 		}
 
 		pre_input = document.createElement("input");
-        pre_input.setAttribute("type","text");
-        pre_input.setAttribute("size","44");
+		pre_input.setAttribute("type","text");
+		pre_input.setAttribute("size","44");
 		pre_input.setAttribute("id", "pre_input");
 		pre_input.setAttribute("style","border:1px solid;background:#FFF;width:310px;margin:2pt;padding:1pt;");
 		pre_input.setAttribute("value",'http://id.example9.jp:8000/login.php?success=http%3A%2F%2Fbookmark.example9.jp%3A8000%2F');
 		configbox.appendChild(pre_input);
 
-        regexp_input = document.createElement("input");
+		regexp_input = document.createElement("input");
 		regexp_input.setAttribute("type","text"); 
 		regexp_input.setAttribute("size","44");
 		regexp_input.setAttribute("id","regexp_input"); 
-        regexp_input.setAttribute("style","border:1px solid;background:#FFF;width:310px;margin:2pt;padding:1pt;"); 
+		regexp_input.setAttribute("style","border:1px solid;background:#FFF;width:310px;margin:2pt;padding:1pt;"); 
 		regexp_input.setAttribute("value",'<input type="hidden" name="__token" value="(.+?)">');
 		configbox.appendChild(regexp_input);
-
 	}
 
 	var resultsel = document.getElementById("results");
@@ -274,23 +305,23 @@ javascript:(function() {
 				extlists=JSON.parse(JSON.stringify(org_extlists));
 				buildpayloads();
 				break;
-            case "close":
+			case "close":
 				cnt=urls.length-1;
 				parentel.style.display="none";
 				d.body.removeChild(parentel);
 				break;
-            case "test":
-                gettoken()
-                .then(data => {
-                    console.log(data);
-                    var preregexp = new RegExp(regexp_input.value);
-                    var found = data.match(preregexp);
-                    var token=found[1];
-                    alert(token);
-                })
-                .catch(function(error) {
-                    alert('error');
-                });
+			case "test":
+				gettoken()
+				.then(data => {
+					console.log(data);
+					var preregexp = new RegExp(regexp_input.value);
+					var found = data.match(preregexp);
+					var token=found[1];
+					alert(token);
+				})
+				.catch(function(error) {
+					alert('error');
+				});
 			break;
 		};
 		switch (t.className) {
@@ -327,10 +358,21 @@ javascript:(function() {
 			}
 		}
 		wordcntobj = document.getElementsByName('count');
-		wordcnt=wordcntobj[0].value;	
-		for(var i=0; i<wordcnt; i++){
-			var pass=makepayload(i,checknum);
-			passes.push(pass);
+		number_fromobj = document.getElementsByName('number_from');
+		number_toobj = document.getElementsByName('number_to');
+		wordcnt=wordcntobj[0].value;
+		from=number_fromobj[0].value;
+		to=number_toobj[0].value;
+		if (checknum & 8){
+			for(var i=from; i<=to; i++){
+				var pass=makepayload(i,checknum);
+				passes.push(pass);
+			}
+		}else{
+			for(var i=0; i<wordcnt; i++){
+				var pass=makepayload(i,checknum);
+				passes.push(pass);
+			}
 		}
 		var text  = data_input.value.replace(/\r\n|\r/g, "\n");
 		var lines = text.split( '\n' );
@@ -440,13 +482,17 @@ javascript:(function() {
 						findurls.push(response.url);
 						console.log(response.status+' yes '+response.url);
 					}
-					console.log("t3:"+cnt+":"+(t2[cnt]-t1[cnt]));
+					console.log("response time:"+cnt+":"+(t2[cnt]-t1[cnt]));
 				});
 				var timeOutPromise = new Promise(function(resolve, reject) {
 					throbj = document.getElementsByName('throttle');
 					thr=throbj[0].value;
 					wordcntobj = document.getElementsByName('count');
-					wordcnt=wordcntobj[0].value;					
+					number_fromobj = document.getElementsByName('number_from');
+					number_toobj = document.getElementsByName('number_to');
+					wordcnt=wordcntobj[0].value;
+					from=number_fromobj[0].value;
+					to=number_toobj[0].value;
 					setTimeout(resolve, thr, 'Timeout Done');
 				});
 				Promise.all([networkPromise, timeOutPromise]).then(function(values) {
@@ -492,14 +538,17 @@ javascript:(function() {
 					findurls.push(response.url);
 					console.log(response.status+' yes '+response.url);
 				}
-				console.log("t3:"+cnt+":"+(t2[cnt]-t1[cnt]));
-
+				console.log("response time:"+cnt+":"+(t2[cnt]-t1[cnt]));
 			});
 			var timeOutPromise = new Promise(function(resolve, reject) {
 				throbj = document.getElementsByName('throttle');
 				thr=throbj[0].value;
 				wordcntobj = document.getElementsByName('count');
+				number_fromobj = document.getElementsByName('number_from');
+				number_toobj = document.getElementsByName('number_to');
 				wordcnt=wordcntobj[0].value;
+				from=number_fromobj[0].value;
+				to=number_toobj[0].value;
 				setTimeout(resolve, thr, 'Timeout Done');
 			});
 			Promise.all([networkPromise, timeOutPromise]).then(function(values) {
