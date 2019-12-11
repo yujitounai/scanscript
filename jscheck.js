@@ -1,8 +1,8 @@
 javascript:(function(){
 src=document.getElementsByTagName('html')[0].innerHTML;
 var matchword='';
-var sources = ['location.hash','location.href','location.search','document.documentURI','document.URL','location.pathname','window.name','document.referer','postMessage'];
-var sinks=['document.write','document.writeIn','outerHTML','innerHTML','.src','eval','setTimeout','setInterval','addEventListener'];
+var sources = ['location.hash','location.href','location.search','location.replace','location.assign','location.pathname','document.documentURI','document.URL','document.referer','window.name'];
+var sinks=['document.write','document.writeIn','outerHTML','innerHTML','.src','eval','setTimeout','setInterval','addEventListener','appendChild','window.open','postMessage'];
 var libs=['prettyPhoto','yuga.js','ultimate.min.js','swfobject.js','jScrollPane','wp-include','jquery.flash','jquery.pjax.js','lodash','wp-include'];
 matchword='[sources:]'+'\n';
 for (var i in sources) {
@@ -17,14 +17,14 @@ for(var i in libs) {
  if (src.indexOf(libs[i]) !== -1)matchword=matchword+libs[i]+'\n'
 }
 alert(matchword);
-remotescripts='[remotescripts:]'+'\n';
+remotescripts='[remotescripts:]'+'\n'+'curl ';
 localscripts='[localscripts:]'+'\n';
 var snodes = document.getElementsByTagName("script");
 for (var i=0; i < snodes.length; i++) {
 	var remotesrc = snodes[i].src;
 	var localsrc = snodes[i].textContent;
 	if (remotesrc!==""){
-		remotescripts=remotescripts+remotesrc+'\n';
+		remotescripts=remotescripts+'-O '+remotesrc+' ';
 	}
 	if (localsrc!==""){
 		localscripts=localscripts+'<script>'+localsrc+'<\/script>\n';
