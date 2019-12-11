@@ -17,14 +17,15 @@ for(var i in libs) {
  if (src.indexOf(libs[i]) !== -1)matchword=matchword+libs[i]+'\n'
 }
 alert(matchword);
-remotescripts='[remotescripts:]'+'\n'+'curl ';
+remotescripts='[remotescripts:]'+'\n'+'curl';
 localscripts='[localscripts:]'+'\n';
 var snodes = document.getElementsByTagName("script");
 for (var i=0; i < snodes.length; i++) {
 	var remotesrc = snodes[i].src;
 	var localsrc = snodes[i].textContent;
 	if (remotesrc!==""){
-		remotescripts=remotescripts+'-O '+remotesrc+' ';
+		var splitsrc = remotesrc.split("/");
+		remotescripts=remotescripts+' -o "'+splitsrc[splitsrc.length-1]+'.js" "'+remotesrc+'"';
 	}
 	if (localsrc!==""){
 		localscripts=localscripts+'<script>'+localsrc+'<\/script>\n';
