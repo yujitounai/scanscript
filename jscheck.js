@@ -1,8 +1,8 @@
 javascript:(function(){
 src=document.getElementsByTagName('html')[0].innerHTML;
 var matchword='';
-var sources = ['location.hash','location.href','location.search','location.replace','location.assign','location.pathname','document.documentURI','document.URL','document.referer','window.name'];
-var sinks=['document.write','document.writeIn','outerHTML','innerHTML','.src','eval','setTimeout','setInterval','addEventListener','appendChild','window.open','postMessage'];
+var sources = ['document.URL','document.documentURI','document.URLUnencoded','document.baseURI','document.cookie','document.referrer','location','location.href','location.search','location.replace','location.assign','location.hash','location.pathname','localStorage.getItem','sessionStorage.getItem','sessionStorage.key','responseText','data','value','name','window.name','websockets.onMessage'];
+var sinks=['eval','function','setTimeout','setInterval','execScript','.generateCRFMRequest','.src','.text','.textContent','.innerText','.onEventName','document.write','document.writeln','.innerHTML','outerHTML','.createContextualFragment','.value','location','location.href','location.pathname','location.search','location.protocol','location.hostname','location.assign','location.replace','addEventListener','appendChild','window.open','postMessage'];
 var libs=['prettyPhoto','yuga.js','ultimate.min.js','swfobject.js','jScrollPane','wp-include','jquery.flash','jquery.pjax.js','lodash','wp-include'];
 matchword='[sources:]'+'\n';
 for (var i in sources) {
