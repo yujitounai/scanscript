@@ -5,36 +5,42 @@ javascript:(function() {
     var secondexts=[
       '',
       '~',
-      '.$$$',
-      '.~1',
-      '.~bk',
-      '.bac',
-      '.BAC',
-      '.backup',
-      '.BACKUP',
+/*      '.$$$',*/
+/*      '.~1',*/
+/*      '.~bk',*/
+/*      '.bac',*/
+/*      '.BAC',*/
+/*      '.backup',*/
+/*      '.BACKUP',*/
       '.bak',
-      '.BAK',
-      '.cs',
-      '.csproj',
+/*      '.BAK',*/
+/*      '.cs',*/
+/*      '.csproj',*/
       '.gz',
-      '.old',
-      '.OLD',
-      '.orig',
-      '.ORIG',
-      '.sav',
-      '.save',
+/*      '.old',*/
+/*      '.OLD',*/
+/*      '.orig',*/
+/*      '.ORIG',*/
+/*      '.sav',*/
+/*      '.save',*/
       '.temp',
       '.tgz',
-      '.tmp',
-      '.TMP',
-      '-OLD',
-      '-old',
+/*      '.tmp',*/
+/*      '.TMP',*/
+/*      '-OLD',*/
+/*      '-old',*/
       ];
-      var pages=[
-      '.git',
+	var pages=[
+      '.DS_Store',
+      '.bash_history',
+	  '.bash_logout',
+	  '.bash_profile',
+	  '.bashrc',
+	  '.git',
       '.git/config',
       '.gitignore',
       '.htaccess',
+      '.htpasswd',
       '.svn',
       'about',
       'aboutus',
@@ -523,7 +529,7 @@ javascript:(function() {
       '2018',
       '2019',
       '2020',
-      '%c0%ae/WEB-INF/web.xml',
+      '/WEB-INF/web.xml',
       '/..3B/',
       ];
 	var extensions=[
@@ -543,7 +549,10 @@ javascript:(function() {
 		['.pdf',''],
 		['.php',''],
 		['.sql',''],
+		['.tmp',''],
+		['.txt',''],
 		['.xls',''],
+		['.xlsx',''],
 		['.xml',''],
 	];
 	var extlists=JSON.parse(JSON.stringify(org_extlists));
@@ -764,7 +773,7 @@ javascript:(function() {
 		for (var i = 0; i < extobj.length; i++) {
 			if (extobj[i].checked) {
 				extlists[i][1] = "checked";
-				extensions.push(extobj[i].value)
+				extensions.push(extobj[i].value);
 			}else{
 				extlists[i][1] = "";  
 			}
@@ -773,7 +782,7 @@ javascript:(function() {
 		for(var k in secondexts) {
 		for(var j in extensions) {
 		for(var i in pages) {
-			 urls.push(location.protocol+'//'+location.host+path+'/'+pages[i]+extensions[j]+secondexts[k]);
+            urls.push(location.protocol+'//'+location.host+path+'/'+pages[i]+extensions[j]+secondexts[k]);
 		} } }
 		urls.push('http://xxe.tokyo');
 		progress_results .innerText=( (org_cnt>0) ? org_cnt:cnt)+"/"+(urls.length-1);
@@ -823,7 +832,7 @@ javascript:(function() {
 				console.log(response.status+' ng '+response.url);
 				if (response.status=='0')redirurls.push(response.url);
 			}else{
-				findurls.push(response.url);
+				findurls.push(response.url);   /*エラーでも200になるときはコメントアウト */
 				console.log(response.status+' yes '+response.url);
 			}
 		});
